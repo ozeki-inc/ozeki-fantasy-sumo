@@ -47,7 +47,7 @@ def league_submit():
 def league_setup():
     """
     Take in the parameters for creating the league.
-    e.g. number of teams, any others.
+    e.g. number of teams, tournament dates, scoring scheme, etc.
     """
     if request.method == 'POST':
         result = request.form
