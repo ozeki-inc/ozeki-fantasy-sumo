@@ -1,0 +1,20 @@
+<html>
+
+    Received the following league: <br>
+
+    {{ league_dict }} <br>
+
+    Please sign the following message: <br>
+
+
+    <form>
+    <ul>
+    {% for pubkey in pubkeys %}
+        <li> Player {{ pubkey }} signature: <input type="text"> </li>
+    {% endfor %}
+    </ul>
+    </form>
+
+
+
+</html>

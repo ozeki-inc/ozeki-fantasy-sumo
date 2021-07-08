@@ -1,0 +1,31 @@
+<html>
+
+    <body>
+
+        <h1> Welcome to Ozeki Fantasy Sumo! </h1>
+
+        <h2> Manage your team </h2>
+
+        <h2> <a href="static/league_setup.html"> Create a league ,</a> </h2>
+
+        <h2> Existing leagues </h2>
+
+        {% for league in leagues %}
+
+
+        <ul>
+
+
+            <li> {{ league }}</li>
+
+        </ul>
+
+        {% endfor %}
+
+    </body>
+
+</html>
+
+
+
+
