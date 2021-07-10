@@ -6,12 +6,24 @@ import hashlib
 from flask import Flask
 from flask import request
 from flask import render_template
+from flask import session
 
+from apscheduler.schedulers.background import BackgroundScheduler
+
+from utils import add_bansho
+from utils import check_league
+from secret_key import session_key
+
+def sensor():
+    print("SUMO")
+
+sched = BackgroundScheduler(daemon=True)
+sched.add_job(sensor,'interval',seconds=60)
+sched.start()
 
 app = Flask(__name__)
 
-def check_league(league_dict):
-    return True
+app.secret_key = session_key
 
 @app.route("/league_submit", methods=["POST", "GET"])
 def league_submit():
@@ -21,6 +33,7 @@ def league_submit():
     """
     # do league sanity checks.
     if request.method == 'POST':
+        print(session['bansho'])
         result = request.form
         n_players = sum([r.startswith('pk') for r in result])
         n_wrestlers = sum([r.startswith('wres') for r in result]) // n_players
@@ -51,13 +64,17 @@ def league_setup():
     """
     if request.method == 'POST':
         result = request.form
-        print(request.form)
         n_players = int(result['teams'])
         roster_size = int(result['roster'])
+        bansho = result['bansho']
+        session['bansho'] = bansho
+
+    add_bansho(bansho)
 
     return render_template("league_create.html",
-                        roster_size=roster_size,
-                        n_teams=n_players)
+                           roster_size=roster_size,
+                           n_teams=n_players,
+                           )
 
 @app.route("/")
 def home():

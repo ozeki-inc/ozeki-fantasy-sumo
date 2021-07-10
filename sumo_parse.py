@@ -31,6 +31,7 @@ def parse_results(results):
 
 def get_results(year, month, day):
     url = f"http://sumodb.sumogames.de/Results_text.aspx?b={year}{month}&d={day}"
+    print(url)
     result = requests.get(url)
     result_df = parse_results(result.text)
     pass
