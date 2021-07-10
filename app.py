@@ -2,6 +2,7 @@ import sys
 import os
 import json
 import hashlib
+import datetime
 
 from flask import Flask
 from flask import request
@@ -12,18 +13,45 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 from utils import add_bansho
 from utils import check_league
+from utils import get_results
 from secret_key import session_key
 
-def sensor():
-    print("SUMO")
+def update_leagues():
+    # open banzuke.txt and see if current month in tracklist
+    year = datetime.date.today().year
+    month = datetime.date.today().month
+    day = datetime.date.today().day
+
+    check = False
+    with open("banshos.txt", "r") as banshos:
+        for l in banshos:
+            bansho_date = datetime.datetime.strptime(l, "%Y-%M")
+            if bansho_date.month == month and bansho_date.year == year:
+                check = True
+
+    # if yes, fetch latest tournament results and store them
+    if check:
+        for bansho_day in range(1, 16):
+            bansho_file = f"{year}-{month}-{day}.csv"
+            if bansho_file in os.listdir("static/banshos"):
+                continue
+            else:
+                bansho_df = get_results(year, month, day)
+                if len(bansho_df) > 0:
+                    bansho_df.to_csv(os.path.join("static/banshos", bansho_file))
+        pass
 
 sched = BackgroundScheduler(daemon=True)
-sched.add_job(sensor,'interval',seconds=60)
+sched.add_job(update_leagues,'interval',seconds=60)
 sched.start()
 
 app = Flask(__name__)
 
 app.secret_key = session_key
+
+@app.route("/league_view/<league_id>")
+def league_view():
+    pass
 
 @app.route("/league_submit", methods=["POST", "GET"])
 def league_submit():
@@ -35,24 +63,35 @@ def league_submit():
     if request.method == 'POST':
         print(session['bansho'])
         result = request.form
-        n_players = sum([r.startswith('pk') for r in result])
-        n_wrestlers = sum([r.startswith('wres') for r in result]) // n_players
 
         pubkeys = []
         league_dict = {}
-        for i in range(n_players):
+
+        league_dict['n_players'] = session['n_players']
+        league_dict['roster_size'] = session['roster_size']
+        league_dict['start_day'] = session['start_day']
+        league_dict['bansho'] = session['bansho']
+
+        for i in range(session['n_players']):
 
             pubkeys.append(result[f'pk_{i}'])
 
-            wrestlers_i = [result[f'wrestler_{i}_{j}'] for j in range(n_wrestlers)]
+            wrestlers_i = [result[f'wrestler_{i}_{j}'] \
+                           for j in range(session['roster_size'])]
             wrestlers_i_sorted = sorted(wrestlers_i)
             league_dict[result[f'pk_{i}']] = wrestlers_i_sorted
         pass
     if check_league(league_dict):
         league_dict_string = json.dumps(league_dict)
+        league_hash = hashlib.sha256(league_dict_string.encode('ascii')).hexdigest()
+
+        with open(f"static/leagues/{league_hash}.json", "w") as league_dump:
+            league_dump.write(league_dict_string)
+
         return render_template("league_sign.html",
                                league_dict=league_dict_string,
-                               pubkeys=pubkeys)
+                               pubkeys=pubkeys,
+                               league_hash=league_hash)
     else:
         return render_template("error.html")
 
@@ -67,6 +106,11 @@ def league_setup():
         n_players = int(result['teams'])
         roster_size = int(result['roster'])
         bansho = result['bansho']
+        start_day = int(result['start'])
+
+        session['n_players'] = n_players
+        session['roster_size'] = roster_size
+        session['start_day'] = start_day
         session['bansho'] = bansho
 
     add_bansho(bansho)
@@ -74,6 +118,8 @@ def league_setup():
     return render_template("league_create.html",
                            roster_size=roster_size,
                            n_teams=n_players,
+                           bansho=bansho,
+                           start_day=start_day
                            )
 
 @app.route("/")

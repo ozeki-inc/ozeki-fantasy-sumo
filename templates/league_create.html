@@ -1,6 +1,7 @@
 <html>
 
     <form action="/league_submit" method="POST" enctype="multipart/form-data">
+        League for tournament: {{ bansho }}, starting day: {{ start_day }}
         {% for t in range(n_teams) %} 
 
             <h2> Player {{ t }}'s Roster </h2> <br>
