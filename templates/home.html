@@ -1,11 +1,17 @@
 {% extends "default.html" %}
 
 {% block body %}
-        <h1> Welcome to Ozeki Fantasy Sumo! </h1>
 
-        <h2> <a href="static/league_setup.html"> Create a league! </a> </h2>
 
-        <h2> Existing leagues </h2>
+	<p>
+		This is a very simple fantasy sumo league engine.
+		Users can create a league by selecting scoring rules, number of players, which tournament they would like to play, etc.
+		Once the league is created and rostesr are entered, the server will automatically fetch match results and update league scores.
+		You can view the source code, find hosting instructions, and contribute on the <a href="https://github.com/ozeki-inc/ozeki-fantasy-sumo">Official Ozeki Inc. Github</a>.
+	</p>
+
+        <h2> <a href="static/league_setup.html"> Create a league </a> </h2>
+        <h2> View existing leagues </h2>
 
         {% for league in leagues %}
 

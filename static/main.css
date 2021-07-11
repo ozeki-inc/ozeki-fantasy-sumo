@@ -1,17 +1,23 @@
 html {
   font-family: arial, sans-serif;
-}
-body {
   margin-top: 200;
-  margin-right: 100px;
-  margin-left: 100px;
+  margin-right: 150px;
+  margin-left: 150px;
+  margin-bottom: 150px;
   font-size: 1.2em;
   }
+
+.header {
+  padding: 30px;
+  text-align: center;
+  font-size: 20px;
+}
 
 p {
   font-size: 1.2em;
   color: DarkSlateGray;
   }
+
 
 h1 {
   font-size: 2.1em;
@@ -30,4 +36,9 @@ td, th {
 
 tr:nth-child(even) {
   background-color: #dddddd;
+}
+
+
+#title{
+float: left;
 }
