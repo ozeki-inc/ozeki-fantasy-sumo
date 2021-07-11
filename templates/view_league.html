@@ -1,8 +1,5 @@
-<html>
-	 <head>
-	    <link rel="stylesheet" href='/static/main.css' />
-	  </head>
-
+{% extends "default.html" %}
+{% block body %}
     <h1> League: {{ results_dict['league_id'][:8] }} </h1>
 
     <ul>
@@ -83,6 +80,4 @@
         {% endfor %}
 
     {% endfor %}
-    
-
-</html>
+{% endblock %}
