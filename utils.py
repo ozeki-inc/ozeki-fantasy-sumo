@@ -127,12 +127,15 @@ def compute_results(league_id, n_days=15):
         league_dict = json.load(l)
     result_dict = rec_dd()
 
+    result_dict['league_string'] = json.dumps(league_dict)
     result_dict['league_id'] = league_id
     result_dict['n_players'] = league_dict['n_players']
     result_dict['roster_size'] = league_dict['roster_size']
 
     bansho_year = league_dict['bansho_year']
     bansho_month = league_dict['bansho_month']
+
+    result_dict['bansho'] = f"{bansho_month}-{bansho_year}"
 
     score_params = {
                     'win_pts': league_dict['win_pts'],

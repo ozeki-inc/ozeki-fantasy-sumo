@@ -3,7 +3,9 @@
 	    <link rel="stylesheet" href='/static/main.css' />
 	  </head>
 
-    <h1> League: {{ results_dict['league_id'] }} </h1>
+    <h1> League: {{ results_dict['league_id'][:8] }} </h1>
+
+    Full ID: {{ results_dict['league_id'] }}
 
     <h2> Leaderboard </h2>
 
