@@ -4,6 +4,7 @@ chardet==4.0.0
 click @ file:///tmp/build/80754af9/click_1621604852318/work
 Flask @ file:///home/ktietz/src/ci/flask_1611932660458/work
 flask-crontab==0.1.2
+gunicorn==20.1.0
 idna==2.10
 importlib-metadata @ file:///opt/concourse/worker/volumes/live/a634a87c-b5e5-41bd-628d-cd0413666c93/volume/importlib-metadata_1617877368300/work
 itsdangerous @ file:///tmp/build/80754af9/itsdangerous_1621432558163/work
