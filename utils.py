@@ -13,13 +13,17 @@ def get_wrestler_image(wrestler_name):
     except KeyError:
         pass
     try:
-        images = wiki.WikipediaPage(wrestler_name).images
+        page = wiki.WikipediaPage(wrestler_name)
+        images = page.images
+        url = page.url
 
         for i in images:
             if re.search(wrestler_name.split()[0], i):
-                return i
+                return i, url
     except wiki.exceptions.PageError:
-        return "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Yokohama-Sumo-Wrestler-Defeating-a-Foreigner-1861-Ipposai-Yoshifuji.png/800px-Yokohama-Sumo-Wrestler-Defeating-a-Foreigner-1861-Ipposai-Yoshifuji.png"
+        default_url = "https://en.wikipedia.org/wiki/Sumo"
+        default_pic = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Yokohama-Sumo-Wrestler-Defeating-a-Foreigner-1861-Ipposai-Yoshifuji.png/800px-Yokohama-Sumo-Wrestler-Defeating-a-Foreigner-1861-Ipposai-Yoshifuji.png", default_url
+        return default_pic, default_url
     pass
 
 def parse_results(results):

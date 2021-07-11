@@ -34,7 +34,9 @@
                 {% for i in range(results_dict['n_players']) %}
 
 		<td> {{ results_dict[i]['wrestlers'][j] }} </td>
-		<td> <img src="{{ results_dict[results_dict[i]['wrestlers'][j]] }}" width=200px></td>
+        <td> <a href="{{ results_dict[results_dict[i]['wrestlers'][j]][1] }}">
+                <img src="{{ results_dict[results_dict[i]['wrestlers'][j]][0] }}" width=200px>
+            </a></td>
 		<td> {{ results_dict[i]['total_by_wrestler'][results_dict[i]['wrestlers'][j]] }}</td>  
 
             {% endfor %}
