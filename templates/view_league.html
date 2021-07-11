@@ -36,7 +36,7 @@
             <tr>
                 {% for i in range(results_dict['n_players']) %}
 
-		<td> {{ results_dict[i]['wrestlers'][j] }} ( {{ results_dict[i]['total_by_wrestler'][results_dict[i]['wrestlers'][j]] }} ) </td>
+		<td> {{ results_dict[i]['wrestlers'][j] }} ( {{ results_dict[i]['total_by_wrestler'][results_dict[i]['wrestlers'][j]] }} ) <img src="{{ results_dict[results_dict[i]['wrestlers'][j]] }}" width=200px></td>
 
             {% endfor %}
             </tr>

@@ -1,7 +1,26 @@
+import re
 import json
 import requests
 import pandas as pd
 from collections import defaultdict
+
+import wikipedia as wiki
+
+def get_wrestler_image(wrestler_name):
+    corrections = {"Hakuho": "Hakuho Sho"}
+    try:
+        wrestler_name = corrections[wrestler_name]
+    except KeyError:
+        pass
+    try:
+        images = wiki.WikipediaPage(wrestler_name).images
+
+        for i in images:
+            if re.search(wrestler_name.split()[0], i):
+                return i
+    except wiki.exceptions.PageError:
+        return "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Yokohama-Sumo-Wrestler-Defeating-a-Foreigner-1861-Ipposai-Yoshifuji.png/800px-Yokohama-Sumo-Wrestler-Defeating-a-Foreigner-1861-Ipposai-Yoshifuji.png"
+    pass
 
 def parse_results(results):
     """
@@ -158,7 +177,10 @@ def compute_results(league_id, n_days=15):
 
     days_played = set()
     for player in range(league_dict['n_players']):
-        result_dict[player]['wrestlers'] = wrestler_dict[player]
+        wrestlers = wrestler_dict[player]
+        result_dict[player]['wrestlers'] = wrestlers
+        for w in wrestlers:
+            result_dict[w] = get_wrestler_image(w)
 
         total_score = 0
         wrestler_total_pts = defaultdict(int)
@@ -190,6 +212,8 @@ def compute_results(league_id, n_days=15):
         result_dict[player]['total'] = total_score
         result_dict[player]['total_by_wrestler'] = wrestler_total_pts
     result_dict['days_played'] = sorted(list(days_played))
+
+    # get sumo pictures
     return result_dict
 
 if __name__ == "__main__":
