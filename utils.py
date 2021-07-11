@@ -65,7 +65,7 @@ def get_player_score(wrestlers,
     if rival_set is None:
         rivals = set()
 
-    ranks = {'M': 0, 'K': 1, 'O': 2, 'Y': 3}
+    ranks = {'M': 0, 'K': 1, 'S': 2, 'O': 3, 'Y': 4}
 
     matches = []
     score = 0
