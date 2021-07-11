@@ -2,10 +2,14 @@
 
     <form action="/league_setup" method="POST" form="league_params" enctype="multipart/form-data">
 
-        Which bansho?: <input type="month" id="bansho" name="bansho"> <br>
-        Start day (inclusive)?: <input type="number" value="1" id="start" name="start"> <br>
+        Bansho:  <input type="month" name="bansho" size="10" id="bansho"><br>
+        Start day:  <input type="number" name="start" size="10" id="start" value="1" min="1" max="14"><br>
         How many teams?:  <input type="number" name="teams" size="10" id="n_teams" value="2" min="1" max="10"><br>
-        Roster size?:  <input type="number" name="roster" size="10" id="roster_size" value="5" min="5" max="10">
+        Roster size?:  <input type="number" name="roster" size="10" id="roster_size" value="5" min="5" max="10"><br>
+        Win pts:  <input type="number" name="win_pts" size="10" id="win_pts" value="1" min="1" max="10"><br>
+        Lose pts:  <input type="number" name="lose_pts" size="10" id="lose_pts" value="0" min="-10" max="0"><br>
+        Rank bonus:  <input type="number" name="rank_bonus" size="10" id="rank_bonus" value="1" min="0" max="1"><br>
+        Rival multiplier:  <input type="number" name="rival" size="10" id="rival" value="1" min="1" max="10"><br>
         <input type="submit" value="Continue">
     </form>
 

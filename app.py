@@ -138,8 +138,7 @@ def league_setup():
 @app.route("/")
 def home():
     # load available leagues
-    leagues = os.listdir("static/leagues")
-    print(leagues)
+    leagues = [l.split('.')[0] for l in os.listdir("static/leagues")]
     return render_template("home.html", leagues=leagues)
 
 if __name__ == "__main__":

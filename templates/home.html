@@ -16,7 +16,7 @@
         <ul>
 
 
-            <li> {{ league }}</li>
+            <li> <a href={{ url_for('league_view', league_id=league) }}>{{ league[:8] }} </a> </li>
 
         </ul>
 
