@@ -5,7 +5,11 @@
 
     <h1> League: {{ results_dict['league_id'][:8] }} </h1>
 
-    Full ID: {{ results_dict['league_id'] }}
+    <ul>
+	    <li>Full ID: {{ results_dict['league_id'] }}</li>
+	    <li>Tournament: {{ results_dict['bansho'] }}</li>
+	    <li>Params: {{ results_dict['league_string'] }}
+    </ul>
 
     <h2> Leaderboard </h2>
 
@@ -32,7 +36,7 @@
             <tr>
                 {% for i in range(results_dict['n_players']) %}
 
-                <td> {{ results_dict[i]['wrestlers'][j] }} </td>
+		<td> {{ results_dict[i]['wrestlers'][j] }} ( {{ results_dict[i]['total_by_wrestler'][results_dict[i]['wrestlers'][j]] }} ) </td>
 
             {% endfor %}
             </tr>
@@ -58,6 +62,7 @@
                         <th>Loser Rank </th>
                         <th>Loser Record </th>
                         <th> Method </th>
+                        <th> Pts. Earned </th>
                     </tr>
                 {% for m in results_dict[p][d]['matches'] %}
                     <tr>
@@ -68,6 +73,7 @@
                         <td>{{ m['rank_loser'] }}</td>
                         <td>{{ m['record_loser'] }}</td>
                         <td>{{ m['method'] }}</td>
+                        <td>{{ m['points'] }}</td>
                     </tr>
                 {% endfor %}
                 </table>

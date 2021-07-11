@@ -74,8 +74,10 @@ def get_player_score(wrestlers,
         rank_factor, match_win, rival_factor = (0, 0, 0)
         if row.winner not in wrestlers and row.loser not in wrestlers:
             continue
+        active_wrestler = ""
         if row.winner in wrestlers:
             played = True
+            active_wrestler = row.winner
 
             match_win = win_pts
             my_rank = ranks[row.rank_winner[0]]
@@ -89,6 +91,7 @@ def get_player_score(wrestlers,
         if row.loser in wrestlers:
             print(row.loser, " LOST")
             played = True
+            active_wrestler = row.loser
 
             my_rank = ranks[row.rank_loser[0]]
             his_rank = ranks[row.rank_winner[0]]
@@ -97,6 +100,15 @@ def get_player_score(wrestlers,
                             else 1 - (max(0, rank_bonus* (my_rank - his_rank)))
 
             print("rank factor ", rank_factor)
+        rival_factor = 1
+        if played and {row.winner, row.loser}.intersection(rivals):
+            rival_factor = 1 if rival_multiplier == 1\
+                           else rival_multiplier
+        print("rival factor ", rival_factor)
+        s = match_win * rank_factor * rival_factor
+        print("match score ", s)
+        score += s
+
         if played:
             matches.append({'rank_winner': row.rank_winner,
                             'winner': row.winner,
@@ -104,16 +116,10 @@ def get_player_score(wrestlers,
                             'loser': row.loser,
                             'method': row.method,
                             'record_winner': row.record_winner,
-                            'record_loser': row.record_loser})
-            rival_factor = 1
-        if played and {row.winner, row.loser}.intersection(rivals):
-            rival_factor = 1 if rival_multiplier == 1\
-                           else rival_multiplier
-
-        print("rival factor ", rival_factor)
-        s = match_win * rank_factor * rival_factor
-        print("match score ", s)
-        score += s
+                            'record_loser': row.record_loser,
+                            'points': s,
+                            'active_wrestler': active_wrestler
+                            })
     return score, matches
 
 def rec_dd():
@@ -155,6 +161,7 @@ def compute_results(league_id, n_days=15):
         result_dict[player]['wrestlers'] = wrestler_dict[player]
 
         total_score = 0
+        wrestler_total_pts = defaultdict(int)
         for day in range(1, n_days+1):
             try:
                 fname = f"static/banshos/{bansho_year}-{int(bansho_month)}-{day}.csv"
@@ -173,8 +180,15 @@ def compute_results(league_id, n_days=15):
 
             result_dict[player][day]['matches'] = matches
             result_dict[player][day]['score'] = score
+
+            for m in matches:
+                print(m['points'])
+                print(m)
+                wrestler_total_pts[m['active_wrestler']] += m['points']
+
             days_played.add(day)
         result_dict[player]['total'] = total_score
+        result_dict[player]['total_by_wrestler'] = wrestler_total_pts
     result_dict['days_played'] = sorted(list(days_played))
     return result_dict
 
