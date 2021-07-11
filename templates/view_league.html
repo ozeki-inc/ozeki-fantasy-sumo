@@ -1,14 +1,15 @@
 <html>
 
-    <h1> League: {{ result_dict['league_id'] }} </h1>
+    <h1> League: {{ results_dict['league_id'] }} </h1>
 
     <h2> Leaderboard </h2>
 
     <table>
-        {% for i in range(result_dict['n_players']) %}
+        {% for i in range(results_dict['n_players']) %}
             <tr>
-                <th> {{ result_dict[i]['player_id'] }}: {{ result_dict[i]['total'] }} </th>
+                <th> {{ results_dict[i]['player_id'] }}: {{ results_dict[i]['total'] }} </th>
             <tr>
+        {% endfor %}
     </table>
 
 
@@ -16,17 +17,17 @@
 
     <table>
         <tr>
-            {% for i in range(result_dict['n_players']) %}
-            <th> {{ result_dict[i]['player_id'] }} </th>
+            {% for i in range(results_dict['n_players']) %}
+            <th> {{ results_dict[i]['player_id'] }} </th>
             {% endfor %}
         </tr>
 
-        {% for i in range(result_dict['n_players']) %}
+            {% for j in range(results_dict['roster_size']) %}
 
             <tr>
-            {for j in range(result_dict['roster_size']) %}
+                {% for i in range(results_dict['n_players']) %}
 
-                <td> {{ result_dict[i]['wrestlers'][j] }} </td>
+                <td> {{ results_dict[i]['wrestlers'][j] }} </td>
 
             {% endfor %}
             </tr>
@@ -35,6 +36,40 @@
     </table>
 
     <h2> Day Results </h2>
+
+    {% for d in results_dict['days_played'][::-1] %}
+
+    <h3> Day {{ d }} </h3>
+
+        {% for p in range(results_dict['n_players']) %}
+
+            <h4> Player {{ results_dict[p]['player_id'] }} </h4>
+                <table>
+                    <tr>
+                        <th>Winner</th>
+                        <th>Winner Rank </th>
+                        <th>Winner Record </th>
+                        <th>Loser </th>
+                        <th>Loser Rank </th>
+                        <th>Loser Record </th>
+                        <th> Method </th>
+                    </tr>
+                {% for m in results_dict[p][d]['matches'] %}
+                    <tr>
+                        <td>{{ m['winner'] }}</td>
+                        <td>{{ m['rank_winner'] }}</td>
+                        <td>{{ m['record_winner'] }}</td>
+                        <td>{{ m['loser'] }}</td>
+                        <td>{{ m['rank_loser'] }}</td>
+                        <td>{{ m['record_loser'] }}</td>
+                        <td>{{ m['method'] }}</td>
+                    </tr>
+                {% endfor %}
+                </table>
+
+        {% endfor %}
+
+    {% endfor %}
     
 
 </html>

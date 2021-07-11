@@ -28,7 +28,11 @@ def parse_results(results):
     df = pd.DataFrame(rows)
     return df
 def get_results(year, month, day):
-    url = f"http://sumodb.sumogames.de/Results_text.aspx?b={year}{month}&d={day}"
+    month_str = str(month)
+    if len(month_str) == 1:
+        month_str = '0' + month_str
+    url = f"http://sumodb.sumogames.de/Results_text.aspx?b={year}{month_str}&d={day}"
+    print(f"Making request: {url}")
     result = requests.get(url)
     result_df = parse_results(result.text)
     return result_df
@@ -62,8 +66,10 @@ def get_player_score(wrestlers,
         rivals = set()
 
     ranks = {'M': 0, 'K': 1, 'O': 2, 'Y': 3}
+
+    matches = []
     score = 0
-    for row in df.itertuples():
+    for row in result_df.itertuples():
         played = False
         rank_factor, match_win, rival_factor = (0, 0, 0)
         if row.winner not in wrestlers and row.loser not in wrestlers:
@@ -92,6 +98,13 @@ def get_player_score(wrestlers,
 
             print("rank factor ", rank_factor)
         if played:
+            matches.append({'rank_winner': row.rank_winner,
+                            'winner': row.winner,
+                            'rank_loser': row.rank_loser,
+                            'loser': row.loser,
+                            'method': row.method,
+                            'record_winner': row.record_winner,
+                            'record_loser': row.record_loser})
             rival_factor = 1
         if played and {row.winner, row.loser}.intersection(rivals):
             rival_factor = 1 if rival_multiplier == 1\
@@ -101,8 +114,7 @@ def get_player_score(wrestlers,
         s = match_win * rank_factor * rival_factor
         print("match score ", s)
         score += s
-
-    return score
+    return score, matches
 
 def rec_dd():
     return defaultdict(rec_dd)
@@ -135,23 +147,32 @@ def compute_results(league_id, n_days=15):
         wrestler_dict[player] = league_dict[f'player_{player}_roster']
         result_dict[player]['player_id'] = league_dict[f'player_{player}']
 
+    days_played = set()
     for player in range(league_dict['n_players']):
         result_dict[player]['wrestlers'] = wrestler_dict[player]
-        opponents = []
 
         total_score = 0
         for day in range(1, n_days+1):
             try:
-                df = pd.read_csv(f"{year}-{month}-{day}.csv")
+                fname = f"static/banshos/{bansho_year}-{int(bansho_month)}-{day}.csv"
+                print(fname)
+                df = pd.read_csv(fname)
             except FileNotFoundError:
+                print("file not found")
                 continue
 
-            score, matches = get_player_score(wrestlers, df, **score_params)
+            opponents = set()
+            for other_player in range(league_dict['n_players']):
+                if other_player != player:
+                    opponents |= set(wrestler_dict[other_player])
+            score, matches = get_player_score(wrestler_dict[player], df, **score_params)
             total_score += score
 
             result_dict[player][day]['matches'] = matches
             result_dict[player][day]['score'] = score
+            days_played.add(day)
         result_dict[player]['total'] = total_score
+    result_dict['days_played'] = sorted(list(days_played))
     return result_dict
 
 if __name__ == "__main__":

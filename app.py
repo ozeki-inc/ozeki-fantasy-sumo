@@ -18,6 +18,7 @@ from utils import compute_results
 from secret_key import session_key
 
 def update_leagues():
+    print("FETCHING RESULTS")
     # open banzuke.txt and see if current month in tracklist
     year = datetime.date.today().year
     month = datetime.date.today().month
@@ -26,24 +27,30 @@ def update_leagues():
     check = False
     with open("banshos.txt", "r") as banshos:
         for l in banshos:
-            bansho_date = datetime.datetime.strptime(l, "%Y-%M")
-            if bansho_date.month == month and bansho_date.year == year:
+            bansho_year, bansho_month = list(map(int, l.split("-")))
+            print("bansho ", bansho_month, bansho_year)
+            print("toady", year, month)
+            if bansho_month == month and bansho_year == year:
                 check = True
 
     # if yes, fetch latest tournament results and store them
     if check:
         for bansho_day in range(1, 16):
-            bansho_file = f"{year}-{month}-{day}.csv"
+            bansho_file = f"{year}-{month}-{bansho_day}.csv"
+            print(f"Looking for {bansho_file}")
             if bansho_file in os.listdir("static/banshos"):
                 continue
             else:
-                bansho_df = get_results(year, month, day)
+                print("QUERYING")
+                bansho_df = get_results(year, month, bansho_day)
+                print(bansho_df)
                 if len(bansho_df) > 0:
                     bansho_df.to_csv(os.path.join("static/banshos", bansho_file))
+                    break
         pass
 
 sched = BackgroundScheduler(daemon=True)
-sched.add_job(update_leagues,'interval',seconds=60)
+sched.add_job(update_leagues,'interval',minutes=10)
 sched.start()
 
 app = Flask(__name__)
@@ -63,7 +70,6 @@ def league_submit():
     """
     # do league sanity checks.
     if request.method == 'POST':
-        print(session['bansho'])
         result = request.form
 
         pubkeys = []
@@ -73,6 +79,8 @@ def league_submit():
         league_dict['roster_size'] = session['roster_size']
         league_dict['start_day'] = session['start_day']
         league_dict['bansho'] = session['bansho']
+        print(session['bansho'])
+        print(session['bansho'].split("-"))
         league_dict['bansho_year'] = session['bansho'].split("-")[0]
         league_dict['bansho_month'] = session['bansho'].split("-")[1]
         league_dict['win_pts'] = session['win_pts']
@@ -87,8 +95,8 @@ def league_submit():
             wrestlers_i = [result[f'wrestler_{i}_{j}'] \
                            for j in range(session['roster_size'])]
             wrestlers_i_sorted = sorted(wrestlers_i)
-            league_dict['player_{i}'] = result[f'pk_{i}']
-            league_dict['player_{i}_roster'] = wrestlers_i_sorted
+            league_dict[f'player_{i}'] = result[f'pk_{i}']
+            league_dict[f'player_{i}_roster'] = wrestlers_i_sorted
         pass
     if check_league(league_dict):
         league_dict_string = json.dumps(league_dict)
