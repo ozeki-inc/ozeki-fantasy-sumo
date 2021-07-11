@@ -1,4 +1,3 @@
-import sys
 import os
 import json
 import hashlib
@@ -14,6 +13,8 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from utils import add_bansho
 from utils import check_league
 from utils import get_results
+from utils import compute_results
+
 from secret_key import session_key
 
 def update_leagues():
@@ -49,9 +50,10 @@ app = Flask(__name__)
 
 app.secret_key = session_key
 
-@app.route("/league_view/<league_id>")
-def league_view():
-    pass
+@app.route("/league_view/<league_id>", methods=["POST", "GET"])
+def league_view(league_id):
+    results_dict = compute_results(league_id)
+    return render_template("view_league.html", results_dict=results_dict)
 
 @app.route("/league_submit", methods=["POST", "GET"])
 def league_submit():
@@ -71,6 +73,8 @@ def league_submit():
         league_dict['roster_size'] = session['roster_size']
         league_dict['start_day'] = session['start_day']
         league_dict['bansho'] = session['bansho']
+        league_dict['bansho_year'] = session['bansho'].split("-")[0]
+        league_dict['bansho_month'] = session['bansho'].split("-")[1]
 
         for i in range(session['n_players']):
 
