@@ -54,10 +54,11 @@ def check_league(league_dict):
 def get_player_score(wrestlers,
                      result_df,
                      win_pts=1,
-                     rivals=None,
-                     rival_multiplier=1.5,
-                     rank_bonus=.1):
-    if rivals is None:
+                     lose_pts=0,
+                     rival_set=None,
+                     rival_multiplier=1,
+                     rank_bonus=0):
+    if rival_set is None:
         rivals = set()
 
     ranks = {'M': 0, 'K': 1, 'O': 2, 'Y': 3}
@@ -113,14 +114,26 @@ def compute_results(league_id, n_days=15):
     with open(f"static/leagues/{league_id}.json", "r") as l:
         league_dict = json.load(l)
     result_dict = rec_dd()
+
+    result_dict['league_id'] = league_id
+    result_dict['n_players'] = league_dict['n_players']
+    result_dict['roster_size'] = league_dict['roster_size']
+
     bansho_year = league_dict['bansho_year']
     bansho_month = league_dict['bansho_month']
 
+    score_params = {
+                    'win_pts': league_dict['win_pts'],
+                    'lose_pts': league_dict['lose_pts'],
+                    'rival_multiplier': league_dict['rival'],
+                    'rank_bonus': league_dict['rank_bonus']
+                   }
+
+
     wrestler_dict = dict()
     for player in range(league_dict['n_players']):
-        wrestlers = [league_dict[f'wrestler_{player}_{w}']\
-                                    for w in range(league_dict['roster_size'])]
-        wrestler_dict[player] = wrestlers
+        wrestler_dict[player] = league_dict[f'player_{player}_roster']
+        result_dict[player]['player_id'] = league_dict[f'player_{player}']
 
     for player in range(league_dict['n_players']):
         result_dict[player]['wrestlers'] = wrestler_dict[player]
@@ -133,7 +146,7 @@ def compute_results(league_id, n_days=15):
             except FileNotFoundError:
                 continue
 
-            score, matches = get_player_score(wrestlers, df)
+            score, matches = get_player_score(wrestlers, df, **score_params)
             total_score += score
 
             result_dict[player][day]['matches'] = matches

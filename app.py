@@ -75,6 +75,10 @@ def league_submit():
         league_dict['bansho'] = session['bansho']
         league_dict['bansho_year'] = session['bansho'].split("-")[0]
         league_dict['bansho_month'] = session['bansho'].split("-")[1]
+        league_dict['win_pts'] = session['win_pts']
+        league_dict['lose_pts'] = session['lose_pts']
+        league_dict['rival'] = session['rival']
+        league_dict['rank_bonus'] = session['rank_bonus']
 
         for i in range(session['n_players']):
 
@@ -83,7 +87,8 @@ def league_submit():
             wrestlers_i = [result[f'wrestler_{i}_{j}'] \
                            for j in range(session['roster_size'])]
             wrestlers_i_sorted = sorted(wrestlers_i)
-            league_dict[result[f'pk_{i}']] = wrestlers_i_sorted
+            league_dict['player_{i}'] = result[f'pk_{i}']
+            league_dict['player_{i}_roster'] = wrestlers_i_sorted
         pass
     if check_league(league_dict):
         league_dict_string = json.dumps(league_dict)
@@ -112,6 +117,10 @@ def league_setup():
         bansho = result['bansho']
         start_day = int(result['start'])
 
+        session['win_pts'] = float(result['win_pts'])
+        session['lose_pts'] = float(result['lose_pts'])
+        session['rank_bonus'] = float(result['rank_bonus'])
+        session['rival'] = float(result['rival'])
         session['n_players'] = n_players
         session['roster_size'] = roster_size
         session['start_day'] = start_day

@@ -1,0 +1,40 @@
+<html>
+
+    <h1> League: {{ result_dict['league_id'] }} </h1>
+
+    <h2> Leaderboard </h2>
+
+    <table>
+        {% for i in range(result_dict['n_players']) %}
+            <tr>
+                <th> {{ result_dict[i]['player_id'] }}: {{ result_dict[i]['total'] }} </th>
+            <tr>
+    </table>
+
+
+    <h2> Rosters </h2>
+
+    <table>
+        <tr>
+            {% for i in range(result_dict['n_players']) %}
+            <th> {{ result_dict[i]['player_id'] }} </th>
+            {% endfor %}
+        </tr>
+
+        {% for i in range(result_dict['n_players']) %}
+
+            <tr>
+            {for j in range(result_dict['roster_size']) %}
+
+                <td> {{ result_dict[i]['wrestlers'][j] }} </td>
+
+            {% endfor %}
+            </tr>
+        
+        {% endfor %}
+    </table>
+
+    <h2> Day Results </h2>
+    
+
+</html>
