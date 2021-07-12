@@ -1,5 +1,5 @@
 html {
-  font-family: arial, sans-serif;
+  font-family: "Lato","PingFang SC","Microsoft YaHei",sans-serif;
   margin-top: 200;
   margin-right: 250px;
   margin-left: 250px;
@@ -48,3 +48,17 @@ a:link {color:black;
 }
 a:visited {color:black;}
 a:hover {color:gray;}
+
+.codebox {
+/* Below are styles for the codebox (not the code itself) */
+border:1px solid black;
+background-color:#EEEEFF;
+width:300px;
+overflow:auto;
+padding:10px;
+}
+.codebox code {
+/* Styles in here affect the text of the codebox */
+font-size:0.9em;
+/* You could also put all sorts of styling here, like different font, color, underline, etc. for the code. */
+}

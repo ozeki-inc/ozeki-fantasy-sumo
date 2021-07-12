@@ -3,10 +3,10 @@
     <h1> League: {{ results_dict['league_id'][:8] }} </h1>
 
     <ul>
-	    <li>Full ID: {{ results_dict['league_id'] }}</li>
+	    <li>Full ID: <code>{{ results_dict['league_id'] }}</code></li>
 	    <li>Tournament: {{ results_dict['bansho'] }}</li>
-	    <li>Params: {{ results_dict['league_string'] }}
     </ul>
+	    <div class="codebox"><code>{{ results_dict['league_string'] }}</code></div>
 
     <h2> Leaderboard </h2>
 
