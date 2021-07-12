@@ -25,6 +25,12 @@ Create the following files and folders. Paths are relative to the repository roo
 * `static/banshos`: contains results from tournaments we track
 * `secret_key.py`: should define a single variable `session_key="<your secret key>"` This is just any random string.
 
+## Run
+
+```
+python app.py
+```
+
 
 An easy way to host is on a [DigitalOcean Droplet](https://www.digitalocean.com/) and follow these [instructions](https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-gunicorn-and-nginx-on-ubuntu-18-04)
 
