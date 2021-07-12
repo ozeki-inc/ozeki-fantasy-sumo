@@ -1,4 +1,4 @@
-# Simple Sumo Fantasy Server
+# Simple Fantasy Sumo Server
 
 
 Create fantasy sumo leagues and auto update scores from [sumodb](sumodb.sumogames.de).
