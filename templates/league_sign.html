@@ -1,12 +1,9 @@
-<html>
+{% extends "default.html" %}
 
-  <head>
-    <link rel="stylesheet" href='/static/main.css' />
-  </head>
+<body>
+	Received the following league: <code>{{ league_hash }} </code> <br>
 
-    Received the following league: {{ league_hash }} <br>
-
-    League setup: {{ league_dict }} <br>
+	League setup: <code>{{ league_dict }} </code><br>
 
     Please sign the following message: <br>
 
@@ -19,8 +16,9 @@
     </ul>
     </form>
 
+    <a href={{ url_for('league_view', league_id=league_hash) }}>View your league.</a>
+
 
     <a href="/">Return to Home</a>
 
-
-</html>
+</body>
