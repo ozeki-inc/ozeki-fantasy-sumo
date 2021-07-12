@@ -8,7 +8,7 @@
 <a href="/">
 <img src="https://www.ozeki.io/assets/ozeki.svg" id="logo" height=150px id="svgMain">
 </a>
-<h1 style="text-align:center">Fantasy Sumo </h1>
+<h2 style="text-align:center">Fantasy Sumo </h2>
 </div>
 
 
@@ -16,14 +16,14 @@
  <p>
  	League settings explained:
  	<ul>
-		<li> Bansho: select the tournament you'd like to play.</li>
-		<li> Start day: which day of the tournament the league should start (1-15) </li>
-		<li> How many teams: number of players in the league </li>
-		<li> Roster size: number of wrestlers each team will draft. </li>
-		<li> Win pts: points to be awarded for a match win </li>
-		<li> Lose pts:  points to be removed for a match loss </li>
-		<li> Rank bonus: Percentage (0-1) added or removed according to difference in wrestler ranks. (e.g. with a bonus value of 0.1, a Maegashira beating a Yokozuna will multiply the win points by (1 + bonus * 4) since a Yokozuna is 4 ranks higher.)
-		<li> Rival multiplier: points awarded in matches where both wrestlers belong to the league's rosters will be multiplied by the given factor.
+		<li> <b>Bansho:</b> select the tournament you'd like to play.</li>
+		<li> <b> Start day:</b> which day of the tournament the league should start (1-15) </li>
+		<li> <b>How many teams:</b> number of players in the league </li>
+		<li> <b>Roster size:</b> number of wrestlers each team will draft. </li>
+		<li> <b>Win pts:</b> points to be awarded for a match win </li>
+		<li> <b>Lose pts:</b>  points to be removed for a match loss </li>
+		<li> <b>Rank bonus:</b> Percentage (0-1) added or removed according to difference in wrestler ranks. (e.g. with a bonus value of 0.1, a Maegashira beating a Yokozuna will multiply the win points by (1 + bonus * 4) since a Yokozuna is 4 ranks higher.)
+		<li> <b>Rival multiplier:</b> points awarded in matches where both wrestlers belong to the league's rosters will be multiplied by the given factor.
 
 	</ul>
  </p>
@@ -31,12 +31,12 @@
 
         Bansho:  <input type="month" name="bansho" id="bansho"><br>
         Start day:  <input type="number" name="start" id="start" value="1" min="1" max="14"><br>
-        How many teams?:  <input type="number" name="teams" id="n_teams" value="2" min="1" max="10"><br>
-        Roster size?:  <input type="number" name="roster" id="roster_size" value="5" min="1" max="10"><br>
-        Win pts:  <input type="number" name="win_pts" id="win_pts" value="1" min="1" max="10"><br>
-        Lose pts:  <input type="number" name="lose_pts" id="lose_pts" value="0" min="-10" max="0"><br>
-        Rank bonus:  <input type="number" name="rank_bonus" id="rank_bonus" value="1" min="0" max="1"><br>
-        Rival multiplier:  <input type="number" name="rival" id="rival" value="1" min="1" max="10"><br>
+        Number of teams:  <input type="number" name="teams" id="n_teams" value="2" min="1" max="10"><br>
+        Roster size:  <input type="number" name="roster" id="roster_size" value="5" min="1" max="10"><br>
+        Win Points:  <input type="number" name="win_pts" id="win_pts" value="1" min="1" max="10"><br>
+        Lose Points:  <input type="number" name="lose_pts" id="lose_pts" value="0" min="-10" max="0"><br>
+        Rank Bonus (multiplies win/lose score by rank difference):  <input type="number" name="rank_bonus" id="rank_bonus" value="1" min="0" max="1"><br>
+        Rival multiplier (multiplies game points when wrestlers of different teams fight):  <input type="number" name="rival" id="rival" value="1" min="1" max="10"><br>
         <input type="submit" value="Continue">
     </form>
  </body>
