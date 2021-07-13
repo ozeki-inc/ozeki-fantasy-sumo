@@ -37,6 +37,9 @@ img {
 		<li> <b>Rival multiplier:</b> points awarded in matches where both wrestlers belong to the league's rosters will be multiplied by the given factor.
 
 	</ul>
+
+	<h2> Score Calculation </h2>
+
  </p>
     <form action="/league_setup" method="POST" form="league_params" enctype="multipart/form-data">
 
@@ -53,5 +56,23 @@ img {
  </body>
 
 <div style="text-align:center;padding-top:50px;padding-bottom:50px"> Powered by <a href="https://www.ozeki.io">Ozeki Inc.</a> </div>
+
+ <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'],],
+      },
+    }
+    const toggle = document.getElementById('typeface-toggle')
+    const typeface = document.getElementById('typeface')
+    toggle.addEventListener('click', () => {
+      document.body.classList.toggle('libertinus')
+      typeface.textContent = document.body.classList.contains('libertinus') ? 'Libertinus' : 'Latin Modern'
+    })
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script async src="prism/prism.js"></script>
+
+  <script async defer data-domain="latex.now.sh" src="https://plausible.io/js/plausible.js"></script>
 
 </html>
