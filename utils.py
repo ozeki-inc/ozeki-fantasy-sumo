@@ -100,7 +100,8 @@ def get_player_score(wrestlers,
     if rival_set is None:
         rivals = set()
 
-    ranks = {'M': 0, 'K': 1, 'S': 2, 'O': 3, 'Y': 4}
+    ranks = ['J', 'M', 'K','S','O','Y']
+    ranks = dict(zip(ranks, range(len(ranks))))
 
     matches = []
     score = 0
@@ -120,7 +121,7 @@ def get_player_score(wrestlers,
 
             # print(row.winner, " rank ", my_rank, " won against ", his_rank, row.loser)
 
-            rank_factor = 1 if rank_bonus== 1\
+            rank_factor = 1 if rank_bonus== 0\
                             else 1 + (max(0, rank_bonus* (his_rank - my_rank)))
             # print("rank factor ", rank_factor)
         if row.loser in wrestlers:
@@ -131,7 +132,7 @@ def get_player_score(wrestlers,
             my_rank = ranks[row.rank_loser[0]]
             his_rank = ranks[row.rank_winner[0]]
             # print(row.loser, " rank ", my_rank, " lost against", his_rank, row.winner)
-            rank_factor = 1 if rank_bonus== 1\
+            rank_factor = 1 if rank_bonus== 0\
                             else 1 - (max(0, rank_bonus* (my_rank - his_rank)))
 
             # print("rank factor ", rank_factor)
@@ -200,7 +201,7 @@ def compute_results(league_id, n_days=15):
 
         total_score = 0
         wrestler_total_pts = defaultdict(int)
-        for day in range(1, n_days+1):
+        for day in range(league_dict['start_day'], n_days+1):
             try:
                 fname = f"static/banshos/{bansho_year}-{int(bansho_month)}-{day}.csv"
                 # print(fname)

@@ -1,6 +1,7 @@
 {% extends "default.html" %}
 
-<body>
+
+{% block body %}
 	Received the following league: <code>{{ league_hash }} </code> <br>
 
 	League setup: <code>{{ league_dict }} </code><br>
@@ -21,4 +22,4 @@
 
     <a href="/">Return to Home</a>
 
-</body>
+{% endblock %}
