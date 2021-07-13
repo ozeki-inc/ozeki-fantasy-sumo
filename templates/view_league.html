@@ -67,10 +67,10 @@
                     </tr>
                 {% for m in results_dict[p][d]['matches'] %}
                     <tr>
-                        <td>{{ m['winner'] }}</td>
+                        <td><a href="{{results_dict[m['winner']][1]}}">{{ m['winner'] }}</a></td>
                         <td>{{ m['rank_winner'] }}</td>
                         <td>{{ m['record_winner'] }}</td>
-                        <td>{{ m['loser'] }}</td>
+                        <td><a href="{{results_dict[m['loser']][1]}}">{{ m['loser'] }}</a></td>
                         <td>{{ m['rank_loser'] }}</td>
                         <td>{{ m['record_loser'] }}</td>
                         <td>{{ m['method'] }}</td>

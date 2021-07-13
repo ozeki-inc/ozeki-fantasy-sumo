@@ -8,23 +8,36 @@ import wikipedia as wiki
 
 def get_wrestler_image(wrestler_name):
     corrections = {"Hakuho": "Hakuho Sho"}
+    new_entry = False
     try:
         wrestler_name = corrections[wrestler_name]
     except KeyError:
         pass
+    with open("static/wrestler_urls.json", "r") as w:
+        d = json.load(w)
     try:
-        page = wiki.WikipediaPage(wrestler_name)
-        images = page.images
-        url = page.url
+        img, url  = d[wrestler_name]
+    except KeyError:
+        new_entry = True
+        try:
+            page = wiki.WikipediaPage(wrestler_name)
+            images = page.images
+            img = images[0]
+            url = page.url
+            for i in images:
+                print(wrestler_name.split()[0], i)
+                if re.search(wrestler_name.split()[0], i):
+                    img = i
+                    break
+        except:
+            img = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Yokohama-Sumo-Wrestler-Defeating-a-Foreigner-1861-Ipposai-Yoshifuji.png/800px-Yokohama-Sumo-Wrestler-Defeating-a-Foreigner-1861-Ipposai-Yoshifuji.png"
+            url = "https://en.wikipedia.org/wiki/Sumo"
 
-        for i in images:
-            if re.search(wrestler_name.split()[0], i):
-                return i, url
-    except wiki.exceptions.PageError:
-        default_url = "https://en.wikipedia.org/wiki/Sumo"
-        default_pic = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Yokohama-Sumo-Wrestler-Defeating-a-Foreigner-1861-Ipposai-Yoshifuji.png/800px-Yokohama-Sumo-Wrestler-Defeating-a-Foreigner-1861-Ipposai-Yoshifuji.png", default_url
-        return default_pic, default_url
-    pass
+    if new_entry:
+        d[wrestler_name] = (img, url)
+        with open("static/wrestler_urls.json", "w") as s:
+            json.dump(d, s)
+    return img, url
 
 def parse_results(results):
     """
@@ -55,7 +68,7 @@ def get_results(year, month, day):
     if len(month_str) == 1:
         month_str = '0' + month_str
     url = f"http://sumodb.sumogames.de/Results_text.aspx?b={year}{month_str}&d={day}"
-    print(f"Making request: {url}")
+    # print(f"Making request: {url}")
     result = requests.get(url)
     result_df = parse_results(result.text)
     return result_df
@@ -68,7 +81,6 @@ def add_bansho(bansho, bansho_file='banshos.txt'):
     with open(bansho_file, 'r') as banshos:
         bansho_set = set()
         for b in banshos:
-            print(b)
             bansho_set.add(b.strip())
     if bansho not in bansho_set:
         with open(bansho_file, 'a') as banshos:
@@ -106,30 +118,30 @@ def get_player_score(wrestlers,
             my_rank = ranks[row.rank_winner[0]]
             his_rank = ranks[row.rank_loser[0]]
 
-            print(row.winner, " rank ", my_rank, " won against ", his_rank, row.loser)
+            # print(row.winner, " rank ", my_rank, " won against ", his_rank, row.loser)
 
             rank_factor = 1 if rank_bonus== 1\
                             else 1 + (max(0, rank_bonus* (his_rank - my_rank)))
-            print("rank factor ", rank_factor)
+            # print("rank factor ", rank_factor)
         if row.loser in wrestlers:
-            print(row.loser, " LOST")
+            # print(row.loser, " LOST")
             played = True
             active_wrestler = row.loser
 
             my_rank = ranks[row.rank_loser[0]]
             his_rank = ranks[row.rank_winner[0]]
-            print(row.loser, " rank ", my_rank, " lost against", his_rank, row.winner)
+            # print(row.loser, " rank ", my_rank, " lost against", his_rank, row.winner)
             rank_factor = 1 if rank_bonus== 1\
                             else 1 - (max(0, rank_bonus* (my_rank - his_rank)))
 
-            print("rank factor ", rank_factor)
+            # print("rank factor ", rank_factor)
         rival_factor = 1
         if played and {row.winner, row.loser}.intersection(rivals):
             rival_factor = 1 if rival_multiplier == 1\
                            else rival_multiplier
-        print("rival factor ", rival_factor)
+        # print("rival factor ", rival_factor)
         s = match_win * rank_factor * rival_factor
-        print("match score ", s)
+        # print("match score ", s)
         score += s
 
         if played:
@@ -191,7 +203,7 @@ def compute_results(league_id, n_days=15):
         for day in range(1, n_days+1):
             try:
                 fname = f"static/banshos/{bansho_year}-{int(bansho_month)}-{day}.csv"
-                print(fname)
+                # print(fname)
                 df = pd.read_csv(fname)
             except FileNotFoundError:
                 print("file not found")
@@ -208,9 +220,11 @@ def compute_results(league_id, n_days=15):
             result_dict[player][day]['score'] = score
 
             for m in matches:
-                print(m['points'])
-                print(m)
+                # print(m['points'])
+                # print(m)
                 wrestler_total_pts[m['active_wrestler']] += m['points']
+                result_dict[m['winner']] = get_wrestler_image(m['winner'])
+                result_dict[m['loser']] = get_wrestler_image(m['loser'])
 
             days_played.add(day)
         result_dict[player]['total'] = total_score
@@ -225,5 +239,5 @@ if __name__ == "__main__":
     # df.to_csv("results_example.csv")
     df = pd.read_csv('results_example.csv')
     s = get_player_score(['Hakuho', 'Tochinoshin'], df, rivals={'Meisei', 'Aoiyama'})
-    print(s)
+    # print(s)
 
