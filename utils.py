@@ -98,7 +98,7 @@ def get_player_score(wrestlers,
                      rival_multiplier=1,
                      rank_bonus=0):
     if rival_set is None:
-        rivals = set()
+        rival_set = set()
 
     ranks = ['J', 'M', 'K','S','O','Y']
     ranks = dict(zip(ranks, range(len(ranks))))
@@ -122,22 +122,24 @@ def get_player_score(wrestlers,
             # print(row.winner, " rank ", my_rank, " won against ", his_rank, row.loser)
 
             rank_factor = 1 if rank_bonus== 0\
-                            else 1 + (max(0, rank_bonus* (his_rank - my_rank)))
+                            else 1 + (max(0, rank_bonus * (his_rank - my_rank)))
             # print("rank factor ", rank_factor)
         if row.loser in wrestlers:
             # print(row.loser, " LOST")
             played = True
             active_wrestler = row.loser
 
+            match_win = lose_pts
+
             my_rank = ranks[row.rank_loser[0]]
             his_rank = ranks[row.rank_winner[0]]
             # print(row.loser, " rank ", my_rank, " lost against", his_rank, row.winner)
             rank_factor = 1 if rank_bonus== 0\
-                            else 1 - (max(0, rank_bonus* (my_rank - his_rank)))
+                            else 1 + (max(0, rank_bonus* (my_rank - his_rank)))
 
             # print("rank factor ", rank_factor)
         rival_factor = 1
-        if played and {row.winner, row.loser}.intersection(rivals):
+        if played and {row.winner, row.loser}.intersection(rival_set):
             rival_factor = 1 if rival_multiplier == 1\
                            else rival_multiplier
         # print("rival factor ", rival_factor)
@@ -210,10 +212,11 @@ def compute_results(league_id, n_days=15):
                 print("file not found")
                 continue
 
-            opponents = set()
+            rivals = set()
             for other_player in range(league_dict['n_players']):
                 if other_player != player:
-                    opponents |= set(wrestler_dict[other_player])
+                    rivals |= set(wrestler_dict[other_player])
+            score_params['rival_set'] = rivals
             score, matches = get_player_score(wrestler_dict[player], df, **score_params)
             total_score += score
 
