@@ -67,10 +67,18 @@
                     </tr>
                 {% for m in results_dict[p][d]['matches'] %}
                     <tr>
-                        <td><a href="{{results_dict[m['winner']][1]}}">{{ m['winner'] }}</a></td>
+			{% if results_dict[m['winner']] == results_dict[m['active_wrestler']] %}
+				<td><a href="{{results_dict[m['winner']][1]}}"><b>{{ m['winner'] }}</b></a></td>
+			{% else %}
+				<td><a href="{{results_dict[m['winner']][1]}}">{{ m['winner'] }}</a></td>
+			{% endif %}
                         <td>{{ m['rank_winner'] }}</td>
                         <td>{{ m['record_winner'] }}</td>
-                        <td><a href="{{results_dict[m['loser']][1]}}">{{ m['loser'] }}</a></td>
+			{% if results_dict[m['loser']] == results_dict[m['active_wrestler']] %}
+				<td><a href="{{results_dict[m['loser']][1]}}"><b>{{ m['loser'] }}</b></a></td>
+			{% else %}
+				<td><a href="{{results_dict[m['loser']][1]}}">{{ m['loser'] }}</a></td>
+			{% endif %}
                         <td>{{ m['rank_loser'] }}</td>
                         <td>{{ m['record_loser'] }}</td>
                         <td>{{ m['method'] }}</td>
