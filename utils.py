@@ -111,6 +111,8 @@ def get_player_score(wrestlers,
         if row.winner not in wrestlers and row.loser not in wrestlers:
             continue
         active_wrestler = ""
+        if row.winner in wrestlers and row.loser in wrestlers:
+            continue
         if row.winner in wrestlers:
             played = True
             active_wrestler = row.winner
