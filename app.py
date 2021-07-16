@@ -58,7 +58,7 @@ def update_leagues():
         pass
 
 sched = BackgroundScheduler(daemon=True)
-sched.add_job(update_leagues,'cron', hour=5)
+sched.add_job(update_leagues,'cron', hour=6)
 # sched.add_job(update_leagues,'interval', seconds=10)
 sched.start()
 
