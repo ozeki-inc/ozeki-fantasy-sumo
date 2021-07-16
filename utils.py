@@ -1,3 +1,4 @@
+import os
 import re
 import json
 import requests
@@ -39,30 +40,59 @@ def get_wrestler_image(wrestler_name):
             json.dump(d, s)
     return img, url
 
-def parse_results(results):
+def parse_table(html, columns):
+    start = False
+    rows = []
+    for l in html.split("\n"):
+        if l.startswith("Makuuchi"):
+            start = True
+        if start and l.startswith("</pre>"):
+            break
+        if start:
+            row = dict(zip(columns, l.split()))
+            if len(row) == len(columns):
+                rows.append(row)
+    df = pd.DataFrame(rows)
+    return df
+
+def parse_results(html):
     """
     ['M5e', 'Okinoumi', '(1-0)', 'oshidashi', 'M4w', 'Chiyotairyu', '(0-1)']
     """
-    keys = ['rank_winner',
+    columns = ['rank_winner',
             'winner', 'record_winner',
             'method',
             'rank_loser',
             'loser',
             'record_loser'
             ]
-    start = False
-    rows = []
-    for l in results.split("\n"):
-        if l.startswith("Makuuchi"):
-            start = True
-        if start and l.startswith("</pre>"):
-            break
-        if start:
-            row = dict(zip(keys, l.split()))
-            if len(row) == len(keys):
-                rows.append(row)
-    df = pd.DataFrame(rows)
-    return df
+    return parse_table(html, columns)
+
+def parse_next_day(html):
+    columns = ['rank_east',
+            'east',
+            'record_east',
+            'rank_west',
+            'west',
+            'record_west'
+            ]
+
+    return parse_table(html, columns)
+
+def get_next_day(year, month, bansho_dir="static/banshos"):
+    # get last day
+    day = max([int(f.split(".")[0].split("-")[-1]) for f in
+                        os.listdir(bansho_dir)]) + 1
+
+    month_str = str(month)
+    if len(month_str) == 1:
+        month_str = '0' + month_str
+    url = f"http://sumodb.sumogames.de/Results_text.aspx?b={year}{month_str}&d={day}"
+    # print(f"Making request: {url}")
+    result = requests.get(url)
+    result_df = parse_next_day(result.text)
+    return result_df, day
+
 def get_results(year, month, day):
     month_str = str(month)
     if len(month_str) == 1:
@@ -239,6 +269,21 @@ def compute_results(league_id, n_days=15):
 
     # get sumo pictures
     return result_dict
+
+def schedule_dict(year, month, day):
+    df = pd.read_csv(f"static/schedules/{year}-{int(month)}-{day}.csv")
+    matches = []
+    print(df)
+    for row in df.itertuples():
+        matches.append({
+                        'east': row.east,
+                        'rank_east': row.rank_east,
+                        'record_east': row.record_east,
+                        'west': row.west,
+                        'rank_west': row.rank_west,
+                        'record_west': row.record_west
+                        })
+    return matches
 
 if __name__ == "__main__":
     # df = get_results('2021', '07', '1')

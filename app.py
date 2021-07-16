@@ -11,6 +11,8 @@ from flask import session
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from utils import add_bansho
+from utils import get_next_day
+from utils import schedule_dict
 from utils import check_league
 from utils import get_results
 from utils import compute_results
@@ -45,12 +47,19 @@ def update_leagues():
                 bansho_df = get_results(year, month, bansho_day)
                 print(bansho_df)
                 if len(bansho_df) > 0:
-                    bansho_df.to_csv(os.path.join("static/banshos", bansho_file))
+                    bansho_df.to_csv(
+                        os.path.join("static/banshos", bansho_file)
+                                )
                     break
+        next_df, day = get_next_day(year, month)
+        next_day_file = f"{year}-{month}-{day}.csv"
+        if len(next_df) > 0:
+            next_df.to_csv(os.path.join(f"static","schedules", next_day_file))
         pass
 
 sched = BackgroundScheduler(daemon=True)
 sched.add_job(update_leagues,'cron', hour=5)
+# sched.add_job(update_leagues,'interval', seconds=10)
 sched.start()
 
 app = Flask(__name__)
@@ -60,7 +69,18 @@ app.secret_key = session_key
 @app.route("/league_view/<league_id>", methods=["POST", "GET"])
 def league_view(league_id):
     results_dict = compute_results(league_id)
-    return render_template("view_league.html", results_dict=results_dict)
+    month, year = results_dict['bansho'].split("-")
+
+    print(results_dict['days_played'])
+    last_day = max(results_dict['days_played'])
+    if last_day == 15:
+        schedule = None
+    else:
+        schedule = schedule_dict(year, month, last_day+1)
+    return render_template("view_league.html",
+                           results_dict=results_dict,
+                           schedule=schedule,
+                           next_day=last_day+1)
 
 @app.route("/league_submit", methods=["POST", "GET"])
 def league_submit():

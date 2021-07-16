@@ -90,4 +90,28 @@
         {% endfor %}
 
     {% endfor %}
+    {% if next_day < 16 %}
+        <h2> Schedule Day {{ next_day }}
+                <table>
+                    <tr>
+                        <th>East </th>
+                        <th>East Rank </th>
+                        <th>East Record </th>
+                        <th>West</th>
+                        <th>West Rank </th>
+                        <th>West Record </th>
+                    </tr>
+
+                    {% for m in schedule %}
+                    <tr>
+                        <td>{{m['east']}}</td>
+                        <td>{{m['rank_east']}}</td>
+                        <td>{{m['recorc_east']}}</td>
+                        <td>{{m['west']}}</td>
+                        <td>{{m['rank_west']}}</td>
+                        <td>{{m['record_west']}}</td>
+                    </tr>
+                    {% endfor %}
+               </table> 
+    {% endif %}
 {% endblock %}
