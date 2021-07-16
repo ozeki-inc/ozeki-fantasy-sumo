@@ -16,6 +16,7 @@ from utils import schedule_dict
 from utils import check_league
 from utils import get_results
 from utils import compute_results
+from utils import get_wrestler_list
 
 from secret_key import session_key
 
@@ -132,6 +133,56 @@ def league_submit():
     else:
         return render_template("error.html")
 
+@app.route("/league_submit_", methods=["POST", "GET"])
+def league_submit_():
+    """
+    Read the league creation inputs and validate,
+    post to blockchain and return to home.
+    """
+    # do league sanity checks.
+    if request.method == 'POST':
+        result = request.form
+
+        pubkeys = []
+        league_dict = {}
+
+        league_dict['n_players'] = session['n_players']
+        league_dict['roster_size'] = session['roster_size']
+        league_dict['start_day'] = session['start_day']
+        league_dict['bansho'] = session['bansho']
+        print(session['bansho'])
+        print(session['bansho'].split("-"))
+        league_dict['bansho_year'] = session['bansho'].split("-")[0]
+        league_dict['bansho_month'] = session['bansho'].split("-")[1]
+        league_dict['win_pts'] = session['win_pts']
+        league_dict['lose_pts'] = session['lose_pts']
+        league_dict['rival'] = session['rival']
+        league_dict['rank_bonus'] = session['rank_bonus']
+
+        for i in range(session['n_players']):
+
+            pubkeys.append(result[f'pk_{i}'])
+
+            wrestlers_i = [result[f'wrestler_{i}_{j}'] \
+                           for j in range(session['roster_size'])]
+            wrestlers_i_sorted = sorted(wrestlers_i)
+            league_dict[f'player_{i}'] = result[f'pk_{i}']
+            league_dict[f'player_{i}_roster'] = wrestlers_i_sorted
+        pass
+    if check_league(league_dict):
+        league_dict_string = json.dumps(league_dict)
+        league_hash = hashlib.sha256(league_dict_string.encode('ascii')).hexdigest()
+
+        with open(f"static/leagues/{league_hash}.json", "w") as league_dump:
+            league_dump.write(league_dict_string)
+
+        return render_template("league_sign.html",
+                               league_dict=league_dict_string,
+                               pubkeys=pubkeys,
+                               league_hash=league_hash)
+    else:
+        return render_template("error.html")
+
 @app.route("/league_setup", methods=["POST", "GET"])
 def league_setup():
     """
@@ -155,12 +206,14 @@ def league_setup():
         session['bansho'] = bansho
 
     add_bansho(bansho)
+    wrestlers = get_wrestler_list()
 
-    return render_template("league_create.html",
+    return render_template("league_draft.html",
                            roster_size=roster_size,
                            n_teams=n_players,
                            bansho=bansho,
-                           start_day=start_day
+                           start_day=start_day,
+                           wrestlers=wrestlers
                            )
 
 @app.route("/")

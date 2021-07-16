@@ -285,6 +285,18 @@ def schedule_dict(year, month, day):
                         })
     return matches
 
+def get_wrestler_list():
+    with open("static/wrestler_urls.json", "r") as w:
+        wrestlers = json.load(w)
+    wrestler_list = []
+    for w, (img, url) in wrestlers.items():
+            wrestler_list.append({'name': w,
+                                  'image': img,
+                                  'url': url,
+                                  'rank': 'O'
+                                  })
+    return sorted(wrestler_list, key=lambda x:x['name'])
+
 if __name__ == "__main__":
     # df = get_results('2021', '07', '1')
     # df.to_csv("results_example.csv")
