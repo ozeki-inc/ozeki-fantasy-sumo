@@ -50,7 +50,7 @@ def update_leagues():
         pass
 
 sched = BackgroundScheduler(daemon=True)
-sched.add_job(update_leagues,'interval',hours=12)
+sched.add_job(update_leagues,'interval',hours=4)
 sched.start()
 
 app = Flask(__name__)
