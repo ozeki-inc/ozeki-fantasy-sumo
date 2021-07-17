@@ -58,8 +58,8 @@ def update_leagues():
             next_df.to_csv(os.path.join(f"static","schedules", next_day_file))
         pass
 
-sched = BackgroundScheduler(daemon=True)
-sched.add_job(update_leagues,'cron', hour=6)
+sched = BackgroundScheduler(daemon=True, timezone='UTC')
+sched.add_job(update_leagues,'cron', hour=10)
 # sched.add_job(update_leagues,'interval', seconds=10)
 sched.start()
 
