@@ -114,7 +114,7 @@ def league_submit():
 
             for k, v in result.items():
                 if k.startswith("wrestler_") and str(v) == str(i):
-                    wrestlers_i.append(k.split("_")[1])
+                    wrestlers_i.append(k.split("_")[1].split()[0])
 
             wrestlers_i_sorted = sorted(wrestlers_i)
             league_dict[f'player_{i}'] = result[f'pk_{i}']
