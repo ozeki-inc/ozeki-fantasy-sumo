@@ -1,0 +1,47 @@
+{% extends "default.html" %}
+
+{% block body %}
+    <form action="/league_submit" method="POST" enctype="multipart/form-data">
+        League for tournament: {{ bansho }}, starting day: {{ start_day }}<br>
+
+        {% for t in range(n_teams) %}
+        Public key {{ t }}: <input type="text" name="pk_{{ t }}" required> <br>
+        {% endfor %}
+
+        <h2>Draft Wrestlers</h2>
+
+        <table>
+
+            <tr>
+            <th>Wrestler</th>
+            <th>Image </th>
+        {% for t in range(n_teams) %} 
+            <th> Player {{ t }} Picks</th>
+        {% endfor %}
+            <tr>
+
+            {% for w in wrestlers %}
+            <tr>
+            <td>{{ w['name'] }}</td>
+            <td><a href="{{w['url']}}"><img src="{{w['image']}}" width="100px"></a></td>
+                {% for p in range(n_teams) %}
+                <td><input name="wrestler_{{ w['name'] }}" type="radio" value="{{ p  }}"></td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+
+        </table>
+        <input type="submit" value="Create League!">
+    </form>
+
+    <script>
+        var radios = document.getElementsByTagName('input');
+for(i=0; i<radios.length; i++ ) {
+    radios[i].onclick = function(e) {
+        if(e.ctrlKey || e.metaKey) {
+            this.checked = false;
+        }
+    }
+}
+    </script>
+{% endblock %}

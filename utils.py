@@ -138,6 +138,7 @@ def get_player_score(wrestlers,
     for row in result_df.itertuples():
         played = False
         rank_factor, match_win, rival_factor = (0, 0, 0)
+
         if row.winner not in wrestlers and row.loser not in wrestlers:
             continue
         active_wrestler = ""
